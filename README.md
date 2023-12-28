@@ -1,46 +1,33 @@
-# ICY_BOX_Interview-exam-answers
+# 🇺🇸 美國人口查詢網站
 
-This template should help get you started developing with Vue 3 in Vite.
+查詢美國各州、城市人口
 
-## Recommended IDE Setup
+## 📃 專案說明
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+該專案為美國人口查詢網站，透過 JSON-Server 的方式，來模擬 Fetch API 的行為，同時透過 Tailwind CSS 打造精美 UI。
 
-## Type Support for `.vue` Imports in TS
+- 此顏色主題靈感來源為：[vitesse theme](https://github.com/antfu/vscode-theme-vitesse)
+- 資料來源：[JSON-Server-Vercel](https://usa-cities-json-server-vercel.vercel.app/cities)
+- DEMO：[美國人口查詢](https://cofcat456.github.io/usa-cities-search-population/)
+- 參考：[JavaScript 30 Day 6 Ajax Type Ahead](https://codepen.io/tariso/pen/LyoaRM)
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+## :sparkles: 特色
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+- 根據使用者輸入結果顯示匹配項目。
+- 具備一鍵清除。
+- 根據不同狀態顯示 UI 畫面(ex: 無結果、錯誤、載入)。
+- 使用者輸入空格(全部)時，不顯示資料。
+- 當資料過多時，出現滾動提示。
+- 配色使用 vitesse theme。
+- 圖標均來自 [icones](https://icones.js.org/)
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+## :wrench: 技術
 
-## Customize configuration
+- Vue 3
+- JSON-Server
+- Tailwind
+- icones
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+## :camera: 截圖
 
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+<img width="1471" alt="Screenshot" src="./public/screenshots/screenshot_1.png?raw=true">

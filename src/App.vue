@@ -1,11 +1,7 @@
 <script setup lang="ts">
+import SearchCities from './components/SearchCities.vue'
 </script>
 
 <template>
-  <main>
-    213
-  </main>
+  <SearchCities />
 </template>
-
-<style scoped>
-</style>
