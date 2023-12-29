@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { computed, nextTick, onMounted, onUnmounted, provide, ref, watch, watchEffect } from 'vue'
 import { Status, type CityData } from '@/_interface'
-import { TriangleIcon, CloseIcon } from '@/assets'
+import { TriangleIcon } from '@/assets'
 import ResultBox from './ResultBox.vue'
 import CitiesUl from './CitiesUl.vue'
+import SearchInput from './SearchInput.vue'
 import { isElementAtBottom } from '@/utils'
 
 const { VITE_API_URL } = import.meta.env
@@ -107,23 +108,11 @@ onUnmounted(() => {
     <h1 class="mb-8 text-center text-3xl">🇺🇸 美國人口查詢</h1>
 
     <!-- 輸入框 -->
-    <div class="relative">
-      <input
-        type="text"
-        placeholder="City or State"
-        class="w-full rounded border border-gray-700 bg-transparent p-4 outline-none disabled:cursor-not-allowed"
-        :disabled="status === Status.ERR || status === Status.LOAD"
-        v-model="inputText"
-      />
-      <button
-        v-if="inputText.length"
-        type="button"
-        class="absolute right-3 top-1/2 h-6 w-6 -translate-y-1/2 text-comment transition-transform hover:scale-105"
-        @click="clearInputText"
-      >
-        <CloseIcon />
-      </button>
-    </div>
+    <SearchInput
+      v-model:inputText="inputText"
+      :disabled="status === Status.ERR || status === Status.LOAD"
+      @clear="clearInputText"
+    />
 
     <!-- 查詢筆數 -->
     <p v-if="inputText.trim().length" class="my-4">
