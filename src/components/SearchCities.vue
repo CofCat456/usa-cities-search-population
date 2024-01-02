@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, nextTick, onMounted, onUnmounted, provide, ref, watch, watchEffect } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { Status, type CityData } from '@/_interface'
 import { TriangleIcon } from '@/assets'
 import ResultBox from './ResultBox.vue'
@@ -17,17 +17,6 @@ const cities = ref<CityData[]>([])
 
 provide('citiesUlRef', citiesUlRef)
 
-const filterCities = computed(() => {
-  if (inputText.value.length === 0) return []
-  if (inputText.value.trim() === '') return []
-
-  const regex = new RegExp(inputText.value, 'gi')
-
-  return cities.value.filter(
-    (citiesData: CityData) => citiesData.city.match(regex) || citiesData.state.match(regex)
-  )
-})
-
 const getStatusText = computed(() => {
   if (status.value === Status.LOAD) return '載入中 ...'
   if (status.value === Status.NORESULT) return '查無資料 !!!'
@@ -37,21 +26,27 @@ const getStatusText = computed(() => {
   return undefined
 })
 
-const fetchCities = async () => {
+const fetchCities = async (text: string) => {
   status.value = Status.LOAD
 
   try {
     const res = await fetch(VITE_API_URL)
     const data = await res.json()
 
-    if (res.status === 200) cities.value = data as CityData[]
-    else {
+    if (res.status === 200) {
+      const regex = new RegExp(text, 'gi')
+
+      cities.value = data.filter(
+        (citiesdata: CityData) => citiesdata.city.match(regex) || citiesdata.state.match(regex)
+      )
+
+      if (cities.value.length === 0) status.value = Status.NORESULT;
+      else status.value = undefined
+
+    } else {
       status.value = Status.ERR
       return []
     }
-
-    status.value = undefined
-    return data
   } catch {
     throw Error('API 有問題')
   }
@@ -68,10 +63,9 @@ function clearInputText() {
   inputText.value = ''
 }
 
-watch([inputText, citiesUlRef], async () => {
-  if (inputText.value.length > 0 && inputText.value.trim() === '') status.value = Status.PROHIBIT
+watch([citiesUlRef, () => [...cities.value]], async () => {
   if (!citiesUlRef.value) return
-  if (filterCities.value.length === 0) return (isScroll.value = false)
+  if (cities.value.length === 0) return (isScroll.value = false)
 
   // 等待資料渲染完成
   await nextTick()
@@ -81,15 +75,17 @@ watch([inputText, citiesUlRef], async () => {
   else isScroll.value = false
 })
 
-watchEffect(() => {
-  if (filterCities.value.length === 0 && inputText.value.length) status.value = Status.NORESULT
-  else status.value = undefined
+watch(inputText, (newText) => {
+  if (inputText.value.length > 0 && inputText.value.trim() === '') return status.value = Status.PROHIBIT
+  if (inputText.value.length === 0 || inputText.value.trim() === '') {
+    cities.value = []
+    return status.value = undefined
+  }
+
+  fetchCities(newText)
 })
 
 onMounted(async () => {
-  await fetchCities()
-
-  // 等待資料渲染完成
   await nextTick()
 
   handleScroll()
@@ -110,7 +106,6 @@ onUnmounted(() => {
     <!-- 輸入框 -->
     <SearchInput
       v-model:inputText="inputText"
-      :disabled="status === Status.ERR || status === Status.LOAD"
       @clear="clearInputText"
     />
 
@@ -120,12 +115,12 @@ onUnmounted(() => {
         {{ status === Status.ERR ? '沒資料' : '載入中資料中...' }}
       </template>
       <template v-else>
-        查詢到 <span class="text-highlight-2">{{ filterCities.length }}</span> 筆項目
+        查詢到 <span class="text-highlight-2">{{ cities.length }}</span> 筆項目
       </template>
     </p>
 
     <!-- 查詢列表 -->
-    <CitiesUl :input-text="inputText" :cities="filterCities" />
+    <CitiesUl :input-text="inputText" :cities="cities" />
 
     <!-- 狀態結果顯示 -->
     <ResultBox :status="status" :text="getStatusText" />

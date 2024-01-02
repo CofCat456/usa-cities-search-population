@@ -4,7 +4,6 @@ import { computed } from 'vue'
 
 const props = defineProps<{
   inputText: string
-  disabled: boolean
 }>()
 
 const emit = defineEmits<{
@@ -14,16 +13,26 @@ const emit = defineEmits<{
 
 const inputText = computed({
   get: () => props.inputText,
-  set: (text) => emit('update:inputText', text)
+  set: debounce((text: string) => emit('update:inputText', text))
 })
+
+function debounce(callback: (e: any) => void, time = 1000) {
+  let timer: ReturnType<typeof setTimeout>;
+
+  return (text: string) => {
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      callback(text)
+    }, time)
+  }
+}
 </script>
 
 <template>
   <div class="relative">
     <input
       type="text"
-      class="peer w-full rounded border border-gray-700 bg-transparent px-4 py-5 outline-none disabled:cursor-not-allowed"
-      :disabled="disabled"
+      class="peer w-full rounded border border-gray-700 bg-transparent px-4 py-5 outline-none"
       placeholder=" "
       v-model="inputText"
     />
